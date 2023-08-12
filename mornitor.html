@@ -140,8 +140,8 @@ License: For each use you must have a valid license purchased only from above li
                                     <div class="card-header pt-5 pb-4">
                                         <!--begin::Title-->
                                         <h3 class="card-title align-items-start flex-column">
-                                            <span class="card-label fw-bold  f_green"
-                                                style="color: #006838;">Smart Watch</span>
+                                            <span class="card-label fw-bold  f_green" style="color: #006838;">Smart
+                                                Watch</span>
                                             <!-- <span class="text-gray-400 mt-1 fw-semibold fs-6">1,046 Inbound Calls today</span> -->
                                         </h3>
                                         <!--end::Title-->
@@ -463,6 +463,7 @@ License: For each use you must have a valid license purchased only from above li
     </script>
     <script>
 
+        var zippi = new Audio('emer.mp3')
 
 
         const socket = io("https://io-watch.adcm.co.th", {
@@ -475,8 +476,71 @@ License: For each use you must have a valid license purchased only from above li
         });
         socket.on('feed/alarm', (data) => {
             console.log(data)
-        });
+            // {
+            //     "datetime": "2023-08-13 01:14:57",
+            //     "location": {
+            //         "latitude": 16.980616666666666,
+            //         "longitude": 99.94906233333333
+            //     },
+            //     "alarm_state": "06",
+            //     "battery_level": "050",
+            //     "payload": {
+            //         "identifier": "IW",
+            //         "commandWord": "AP10",
+            //         "date": "2023-08-12",
+            //         "dataValidity": "A",
+            //         "lbsData": "1658.83700N09956.94374E000",
+            //         "gmtTime": ".41814",
+            //         "directionAngle": "57000.",
+            //         "gsmSignal": "001",
+            //         "satellites": "000",
+            //         "batteryLevel": "050",
+            //         "remainingSpace": "5",
+            //         "fortificationState": "40",
+            //         "workingMode": "0003",
+            //         "lbsBaseData": {
+            //             "mcc": "520",
+            //             "mnc": "3",
+            //             "lac": "16392",
+            //             "cid": "42009457"
+            //         },
+            //         "alarmState": "06",
+            //         "deviceLanguage": "zh-cn",
+            //         "replyAddress": "0",
+            //         "mobileHyperlink": "0",
+            //         "wifiInformation": [
+            //             {
+            //                 "ssid": "a",
+            //                 "macAddress": "28-de-e5-91-25-3c",
+            //                 "signalStrength": "68"
+            //             }
+            //         ]
+            //     },
+            //     "metadata": null,
+            //     "smart_watch_id": 2,
+            //     "imei": "865513041164663"
+            // }
 
+            var latitude = data.location.latitude
+            var longitude = data.location.longitude
+            Swal.fire({
+                icon: 'warning',
+                title: '! - Alert - !',
+                text: `${data.imei} : มีการร้องขอความช่วยเหลือ !\n ${data.datetime}`,
+                confirmButtonText: '<i class="fa-solid fa-xmark"></i> ปิด <i class="fa-solid fa-xmark"></i>',
+                footer: `<a href='https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}' target='_blank'>
+						<span>Open Google Map</span>
+					</a>`,
+                didOpen: function () {
+                    zippi.play();
+                },
+                willClose: () => {
+                    // clearInterval(timerInterval)
+                    zippi.pause();
+                    zippi.currentTime = 0;
+                }
+            })
+        });
 
 
 
@@ -525,11 +589,11 @@ License: For each use you must have a valid license purchased only from above li
         getWatchList().then(response => {
             console.log(response);
 
-            response.data.forEach((element , index) => {
+            response.data.forEach((element, index) => {
                 $("#select_imei").append(
                     `<option value='${element.imei}'>imei ${element.imei}</option>`
                 )
-                if(index == 0){
+                if (index == 0) {
                     setW(element.imei);
                 }
             })
