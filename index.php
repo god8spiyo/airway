@@ -323,13 +323,13 @@ License: For each use you must have a valid license purchased only from above li
                                                     <div class="d-flex align-items-center mb-2">
                                                         <!--begin::Title-->
                                                         <span
-                                                            class="fs-2hx fw-bold text-gray-800 me-2 lh-1 ls-n2">Airway Scan</span>
+                                                            class="fs-2hx fw-bold text-gray-800 me-2 lh-1 ls-n2">Airline Scan</span>
                                                         <!--end::Title-->
                                               
                                                     </div>
                                                     <!--end::Heading-->
                                                     <!--begin::Description-->
-                                                    <span class="fs-6 fw-semibold text-gray-400">Organic Sessions</span>
+                                                    <span class="fs-6 fw-semibold text-gray-400">Exam Session</span>
                                                     <!--end::Description-->
                                                 </div>
                                                 <!--end::Statistics-->
