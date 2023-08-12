@@ -137,6 +137,27 @@ License: For each use you must have a valid license purchased only from above li
 
 
                                 <div class="tab-content" id="myTabContent">
+                                    <div class="card-header pt-5 pb-4">
+                                        <!--begin::Title-->
+                                        <h3 class="card-title align-items-start flex-column">
+                                            <span class="card-label fw-bold  f_green"
+                                                style="color: #006838;">Smart Watch</span>
+                                            <!-- <span class="text-gray-400 mt-1 fw-semibold fs-6">1,046 Inbound Calls today</span> -->
+                                        </h3>
+                                        <!--end::Title-->
+
+                                        <!--begin::Toolbar-->
+                                        <div class="card-toolbar">
+
+                                            <select class="form-select" aria-label="imei" id="select_imei">
+                                                <!-- <option>Open this select menu</option> -->
+
+
+                                            </select>
+                                            <!--end::Daterangepicker-->
+                                        </div>
+                                        <!--end::Toolbar-->
+                                    </div>
                                     <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
 
                                         <div class="row gx-5 gx-xl-10">
@@ -255,8 +276,8 @@ License: For each use you must have a valid license purchased only from above li
                                                             <select class="form-select" aria-label="เลือก..."
                                                                 id='select_type'>
                                                                 <!-- <option>Open this select menu</option> -->
-                                                                <option value="temperature">อุณหภูมิ</option>
                                                                 <option value="heartrate">อัตราการเต้นของหัวใจ</option>
+                                                                <option value="temperature">อุณหภูมิ</option>
                                                                 <option value="sbp">ความดันโลหิต</option>
                                                                 <option value="spo2">ค่าออกซิเจนในเลือด</option>
 
@@ -460,10 +481,11 @@ License: For each use you must have a valid license purchased only from above li
 
 
         // Then, show one image by click it, or call `gallery.show()`.
-        let imei = "865513041161826";
-        let typeSelect = 'temperature';
+        let imei_g = "865513041161826";
+        let typeSelect = 'heartrate';
         let gen_kt_charts = false;
-        let series, xAxis , series2;
+        let gen_kt_charts2 = false;
+        let series, xAxis, series_2, series_22;
         let arTop10 = [];
         let top_list = [];
 
@@ -501,7 +523,30 @@ License: For each use you must have a valid license purchased only from above li
         })
 
         getWatchList().then(response => {
-            // console.log(response);
+            console.log(response);
+
+            response.data.forEach((element , index) => {
+                $("#select_imei").append(
+                    `<option value='${element.imei}'>imei ${element.imei}</option>`
+                )
+                if(index == 0){
+                    setW(element.imei);
+                }
+            })
+
+
+        }).then(() => {
+
+            $("#select_imei").on('change', function () {
+                var imei = $(this).val();
+                setW(imei);
+            })
+
+        })
+
+        function setW(imei) {
+
+            $('#select_type').val('heartrate')
             getWatchImei(imei).then(response => {
                 // console.log(response);
                 $('#txt_imei').html(response.message);
@@ -519,7 +564,7 @@ License: For each use you must have a valid license purchased only from above li
             getWatchHistory(imei).then(response => {
                 // console.log(response)
                 var i = 0;
-                // var arTop10 = [];
+                arTop10 = [];
                 response.data.forEach(element => {
                     if (i == 10) {
                         return false;
@@ -532,8 +577,7 @@ License: For each use you must have a valid license purchased only from above li
                 genChartToplist(typeSelect)
             })
 
-        })
-
+        }
         async function getWatchList() {
 
 
@@ -589,6 +633,10 @@ License: For each use you must have a valid license purchased only from above li
 
 
         function genChartToplist(typeSelect) {
+            $('#kt_amcharts').hide();
+
+            $('#kt_amcharts2').hide();
+
             console.log(typeSelect);
             top_list = [];
             if (typeSelect == 'temperature') {
@@ -627,6 +675,8 @@ License: For each use you must have a valid license purchased only from above li
 
 
             if (typeSelect == 'sbp') {
+
+                $('#kt_amcharts2').show();
                 var data = [];
                 // Set data
                 // "datetime": "2023-08-12 13:06:31",
@@ -638,66 +688,31 @@ License: For each use you must have a valid license purchased only from above li
                 //                         "bs": null
                 arTop10.forEach(element => {
 
-                    var dateX = element.datetime.substring(0,10)
+                    // var dateX = element.datetime.substring(0, 10)
                     data.push(
                         {
-                            date: dateX,
+                            date: new Date(element.datetime).getTime(),
+                            // date: element.datetime ,
                             value1: element.sbp,
                             value2: element.dbp,
-                            previousDate: dateX
+                            // previousDate: element.datetime
                         }
                     );
 
                 })
-                // if (gen_kt_charts) {
-                //     series.data.setAll(data);
-                //     series2.data.setAll(data);
-                //     return false;
-                // }
-                var data2 = [
-                    {
-                        date: new Date(2019, 5, 12).getTime(),
-                        value1: 50,
-                        value2: 48,
-                        previousDate: new Date(2019, 5, 5)
-                    }, {
-                        date: new Date(2019, 5, 13).getTime(),
-                        value1: 53,
-                        value2: 51,
-                        previousDate: "2019-05-06"
-                    }, {
-                        date: new Date(2019, 5, 14).getTime(),
-                        value1: 56,
-                        value2: 58,
-                        previousDate: "2019-05-07"
-                    }, {
-                        date: new Date(2019, 5, 15).getTime(),
-                        value1: 52,
-                        value2: 53,
-                        previousDate: "2019-05-08"
-                    }, {
-                        date: new Date(2019, 5, 16).getTime(),
-                        value1: 48,
-                        value2: 44,
-                        previousDate: "2019-05-09"
-                    }, {
-                        date: new Date(2019, 5, 17).getTime(),
-                        value1: 47,
-                        value2: 42,
-                        previousDate: "2019-05-10"
-                    }, {
-                        date: new Date(2019, 5, 18).getTime(),
-                        value1: 59,
-                        value2: 55,
-                        previousDate: "2019-05-11"
-                    }
-                ]
 
-                console.log(data)
+                if (gen_kt_charts2) {
 
+                    series_2.data.setAll(data);
+                    series_22.data.setAll(data);
+                    return false;
+                }
+
+
+                // console.log(data)
+                // console.log(data2)
                 am5.ready(function () {
-                    gen_kt_charts = true;
-
+                    gen_kt_charts2 = true;
                     // Create root element
                     // https://www.amcharts.com/docs/v5/getting-started/#Root_element
                     var root = am5.Root.new("kt_amcharts2");
@@ -734,12 +749,13 @@ License: For each use you must have a valid license purchased only from above li
                     var xAxis = chart.xAxes.push(am5xy.DateAxis.new(root, {
                         maxDeviation: 0.3,
                         baseInterval: {
-                            timeUnit: "day",
+                            timeUnit: "minute",
                             count: 1
                         },
                         renderer: am5xy.AxisRendererX.new(root, {}),
                         tooltip: am5.Tooltip.new(root, {})
                     }));
+
 
                     var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
                         maxDeviation: 0.3,
@@ -749,31 +765,35 @@ License: For each use you must have a valid license purchased only from above li
 
                     // Add series
                     // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
-                    series = chart.series.push(am5xy.LineSeries.new(root, {
+                    series_2 = chart.series.push(am5xy.LineSeries.new(root, {
                         name: "Series 1",
                         xAxis: xAxis,
                         yAxis: yAxis,
                         valueYField: "value1",
                         valueXField: "date",
                         tooltip: am5.Tooltip.new(root, {
-                            labelText: "{valueX}: {valueY}\n{date}: {value2}"
+                            // labelText: "SBP:{value1} \nDBP: {value2}"
+                            labelText: "{valueX}: {valueY}\n{previousDate}: {value2}"
+
+
                         })
                     }));
 
-                    series.strokes.template.setAll({
+                    series_2.strokes.template.setAll({
                         strokeWidth: 2
                     });
 
-                    series.get("tooltip").get("background").set("fillOpacity", 0.5);
+                    series_2.get("tooltip").get("background").set("fillOpacity", 0.5);
 
-                    series2 = chart.series.push(am5xy.LineSeries.new(root, {
+                    series_22 = chart.series.push(am5xy.LineSeries.new(root, {
                         name: "Series 2",
                         xAxis: xAxis,
                         yAxis: yAxis,
                         valueYField: "value2",
-                        valueXField: "date"
+                        valueXField: "date",
                     }));
-                    series2.strokes.template.setAll({
+
+                    series_22.strokes.template.setAll({
                         strokeDasharray: [2, 2],
                         strokeWidth: 2
                     });
@@ -786,21 +806,59 @@ License: For each use you must have a valid license purchased only from above li
                     });
 
 
+                    // // Set data
+                    // var data = [{
+                    //     date: new Date(2019, 5, 12).getTime(),
+                    //     value1: 50,
+                    //     value2: 48,
+                    //     previousDate: new Date(2019, 5, 5)
+                    // }, {
+                    //     date: new Date(2019, 5, 13).getTime(),
+                    //     value1: 53,
+                    //     value2: 51,
+                    //     previousDate: "2019-05-06"
+                    // }, {
+                    //     date: new Date(2019, 5, 14).getTime(),
+                    //     value1: 56,
+                    //     value2: 58,
+                    //     previousDate: "2019-05-07"
+                    // }, {
+                    //     date: new Date(2019, 5, 15).getTime(),
+                    //     value1: 52,
+                    //     value2: 53,
+                    //     previousDate: "2019-05-08"
+                    // }, {
+                    //     date: new Date(2019, 5, 16).getTime(),
+                    //     value1: 48,
+                    //     value2: 44,
+                    //     previousDate: "2019-05-09"
+                    // }, {
+                    //     date: new Date(2019, 5, 17).getTime(),
+                    //     value1: 47,
+                    //     value2: 42,
+                    //     previousDate: "2019-05-10"
+                    // }, {
+                    //     date: new Date(2019, 5, 18).getTime(),
+                    //     value1: 59,
+                    //     value2: 55,
+                    //     previousDate: "2019-05-11"
+                    // }]
 
-
-                    series.data.setAll(data);
-                    series2.data.setAll(data);
+                    series_2.data.setAll(data);
+                    series_22.data.setAll(data);
 
 
                     // Make stuff animate on load
                     // https://www.amcharts.com/docs/v5/concepts/animations/
-                    series.appear(1000);
-                    series2.appear(1000);
+                    series_2.appear(1000);
+                    series_22.appear(1000);
                     chart.appear(1000, 100);
 
                 }); // end am5.ready()
 
+
             } else {
+                $('#kt_amcharts').show();
 
                 if (gen_kt_charts) {
                     xAxis.data.setAll(top_list);
