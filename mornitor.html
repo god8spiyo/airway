@@ -521,15 +521,27 @@ License: For each use you must have a valid license purchased only from above li
             //     "imei": "865513041164663"
             // }
 
-            var latitude = data.location.latitude
-            var longitude = data.location.longitude
+            var latitude , longitude 
+            var txtMap = "Open Google Map";
+
+            if(data?.location){
+                latitude = data.location.latitude ;
+                longitude = data.location.longitude ;
+            }else{
+
+                latitude = 0
+                longitude = 0
+                txtMap = 'ไม่มี location';
+
+            }
+
             Swal.fire({
                 icon: 'warning',
                 title: '! - Alert - !',
                 text: `${data.imei} : มีการร้องขอความช่วยเหลือ !\n ${data.datetime}`,
                 confirmButtonText: '<i class="fa-solid fa-xmark"></i> ปิด <i class="fa-solid fa-xmark"></i>',
                 footer: `<a href='https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}' target='_blank'>
-						<span>Open Google Map</span>
+						<span>${txtMap}</span>
 					</a>`,
                 didOpen: function () {
                     zippi.play();
