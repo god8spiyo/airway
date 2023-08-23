@@ -743,8 +743,6 @@ License: For each use you must have a valid license purchased only from above li
                     })
 
                 })
-            } else if (typeSelect == 'sbp') {
-
             }
 
 
@@ -841,6 +839,7 @@ License: For each use you must have a valid license purchased only from above li
 
                     // Add series
                     // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+                    // series_2 = chart.series.push(am5xy.LineSeries.new(root , {}));
                     series_2 = chart.series.push(am5xy.LineSeries.new(root, {
                         name: "Series 1",
                         xAxis: xAxis,
@@ -849,11 +848,13 @@ License: For each use you must have a valid license purchased only from above li
                         valueXField: "date",
                         tooltip: am5.Tooltip.new(root, {
                             // labelText: "SBP:{value1} \nDBP: {value2}"
-                            labelText: "{valueX}: {valueY}\n{previousDate}: {value2}"
-
-
+                            // labelText: "{valueX}: {valueY}\n{previousDate}: {value2}"
                         })
                     }));
+
+                 
+
+
 
                     series_2.strokes.template.setAll({
                         strokeWidth: 2
