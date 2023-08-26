@@ -783,12 +783,22 @@ License: For each use you must have a valid license purchased only from above li
                 arTop10.forEach(element => {
 
                     // var dateX = element.datetime.substring(0, 10)
+                    // data.push(
+                    //     {
+                    //         date: new Date(element.datetime).getTime(),
+                    //         // date: element.datetime ,
+                    //         value1: element.sbp,
+                    //         value2: element.dbp,
+                    //         // previousDate: element.datetime
+                    //     }
+                    // );
                     data.push(
                         {
-                            date: new Date(element.datetime).getTime(),
-                            // date: element.datetime ,
-                            value1: element.sbp,
-                            value2: element.dbp,
+                            // date: new Date(element.datetime).getTime(),
+                            date0: new Date(element.datetime).getTime() ,
+                            price0: element.sbp,
+                            date1: new Date(element.datetime).getTime() ,
+                            value1: element.dbp,
                             // previousDate: element.datetime
                         }
                     );
@@ -811,7 +821,124 @@ License: For each use you must have a valid license purchased only from above li
                     // https://www.amcharts.com/docs/v5/getting-started/#Root_element
                     var root = am5.Root.new("kt_amcharts2");
 
+                    // var data = [];
+                    // var price0 = 1000,
+                    //     price1 = 1200;
 
+                    // for (var i = 0; i < 360; i++) {
+                    //     price0 += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 100);
+                    //     data.push({ date0: new Date(2015, 0, i).getTime(), price0: price0 });
+                    // }
+
+                    // for (var i = 0; i < 360; i++) {
+                    //     price1 += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 100);
+                    //     data.push({ date1: new Date(2017, 0, i).getTime(), price1: price1 });
+                    // }
+
+                    // Set themes
+                    // https://www.amcharts.com/docs/v5/concepts/themes/
+                    root.setThemes([
+                        am5themes_Animated.new(root)
+                    ]);
+
+                    // Create chart
+                    // https://www.amcharts.com/docs/v5/charts/xy-chart/
+                    var chart = root.container.children.push(
+                        am5xy.XYChart.new(root, {
+                            panX: true,
+                            panY: true,
+                            wheelX: "panX",
+                            wheelY: "zoomX"
+                        })
+                    );
+
+                    // Add cursor
+                    // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+                    var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+                        behavior: "none"
+                    }));
+                    cursor.lineY.set("visible", false);
+
+                    // Create axes
+                    // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+                    var xAxis0 = chart.xAxes.push(
+                        am5xy.DateAxis.new(root, {
+                            baseInterval: { timeUnit: "minute", count: 1 },
+                            renderer: am5xy.AxisRendererX.new(root, {}),
+                            tooltip: am5.Tooltip.new(root, {}),
+                            // tooltipDateFormat: "yyyy-MM-dd"
+                        })
+                    );
+
+                    var xAxis1 = chart.xAxes.push(
+                        am5xy.DateAxis.new(root, {
+                            marginTop: 10,
+                            baseInterval: { timeUnit: "minute", count: 1 },
+                            renderer: am5xy.AxisRendererX.new(root, {}),
+                            tooltip: am5.Tooltip.new(root, {}),
+                            // tooltipDateFormat: "yyyy-MM-dd"
+                        })
+                    );
+
+                    var yAxis = chart.yAxes.push(
+                        am5xy.ValueAxis.new(root, {
+                            maxDeviation: 1,
+                            renderer: am5xy.AxisRendererY.new(root, { pan: "zoom" })
+                        })
+                    );
+
+                    // Add series
+                    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+                    var series0 = chart.series.push(
+                        am5xy.LineSeries.new(root, {
+                            name: "Series",
+                            xAxis: xAxis0,
+                            yAxis: yAxis,
+                            valueYField: "price0",
+                            valueXField: "date0",
+                            tooltip: am5.Tooltip.new(root, {
+                                labelText: "{valueY}"
+                            })
+                        })
+                    );
+
+                    var series1 = chart.series.push(
+                        am5xy.LineSeries.new(root, {
+                            name: "Series",
+                            xAxis: xAxis1,
+                            yAxis: yAxis,
+                            valueYField: "price1",
+                            valueXField: "date1",
+                            tooltip: am5.Tooltip.new(root, {
+                                labelText: "{valueY}"
+                            })
+                        })
+                    );
+
+
+                    console.log(data);
+                    series0.data.setAll(data);
+                    series1.data.setAll(data);
+
+                    
+                    // sbSeries.data.setAll(data);
+
+                    // Make stuff animate on load
+                    // https://www.amcharts.com/docs/v5/concepts/animations/
+                    series0.appear(1000);
+                    series1.appear(1000);
+
+
+
+
+                    return false;
+                    /////////////////////////////////////////////////////
+
+
+
+
+
+        
                     // Set themes
                     // https://www.amcharts.com/docs/v5/concepts/themes/
                     root.setThemes([
@@ -834,9 +961,8 @@ License: For each use you must have a valid license purchased only from above li
 
                     // Add cursor
                     // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
-                    var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
-                    cursor.lineY.set("visible", false);
-
+                    // var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {behavior: "none"}));
+                    // cursor.lineY.set("visible", false);
 
                     // Create axes
                     // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
@@ -872,7 +998,7 @@ License: For each use you must have a valid license purchased only from above li
                         })
                     }));
 
-                 
+
 
 
 
