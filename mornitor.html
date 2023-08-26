@@ -296,9 +296,9 @@ License: For each use you must have a valid license purchased only from above li
 
 
                                                             <div class="mb-12 col-md-12">
-                                                                <div id="kt_amcharts" style="height: 500px;"></div>
-                                                                <div id="kt_amcharts2" style="height: 500px;"></div>
-
+                                                                <!-- <div id="kt_amcharts" style="height: 500px;"></div> -->
+                                                                <!-- <div id="kt_amcharts2" style="height: 500px;"></div> -->
+                                                                <canvas id="kt_chartjs_2" class="mh-400px"></canvas>
                                                             </div>
 
 
@@ -521,13 +521,13 @@ License: For each use you must have a valid license purchased only from above li
             //     "imei": "865513041164663"
             // }
 
-            var latitude , longitude 
+            var latitude, longitude
             var txtMap = "Open Google Map";
 
-            if(data?.location){
-                latitude = data.location.latitude ;
-                longitude = data.location.longitude ;
-            }else{
+            if (data?.location) {
+                latitude = data.location.latitude;
+                longitude = data.location.longitude;
+            } else {
 
                 latitude = 0
                 longitude = 0
@@ -593,8 +593,9 @@ License: For each use you must have a valid license purchased only from above li
         }
 
         $('#select_type').on('change', function () {
-            $(this).val();
-            genChartToplist($(this).val())
+            // $(this).val();
+            // genChartToplist($(this).val())
+            genChartJS($(this).val() , true)
 
         })
 
@@ -650,7 +651,8 @@ License: For each use you must have a valid license purchased only from above li
 
                     }
                 })
-                genChartToplist(typeSelect)
+                // genChartToplist(typeSelect)
+                genChartJS(typeSelect)
             })
 
         }
@@ -743,6 +745,24 @@ License: For each use you must have a valid license purchased only from above li
                     })
 
                 })
+<<<<<<< HEAD
+=======
+            } else if (typeSelect == 'sbp') {
+                arTop10.forEach(element => {
+
+                    // var dateX = element.datetime.substring(0, 10)
+                    data.push(
+                        {
+                            date: new Date(element.datetime).getTime(),
+                            // date: element.datetime ,
+                            value1: element.sbp,
+                            value2: element.dbp,
+                            // previousDate: element.datetime
+                        }
+                    );
+
+                })
+>>>>>>> 510d1d367ded1a7fed990554af043f132fe17aec
             }
 
 
@@ -1056,7 +1076,119 @@ License: For each use you must have a valid license purchased only from above li
 
         }
 
+        var myChart ;
+        function genChartJS(typeSelect , update = false) {
 
+
+            console.log(typeSelect);
+            var data = [];
+            var data2 = [];
+            var labelSet = [];
+            var label1 , label2; 
+            var ob2 = {}
+
+            var primaryColor = "#00cec9"
+            var dangerColor = "#ff7675"
+
+
+            if (typeSelect == 'temperature') {
+                label1 = 'อุณหภูมิ'
+                arTop10.forEach(element => {
+                    data.push(element.temperature)
+                    labelSet.push(element.datetime)
+                })
+
+            } else if (typeSelect == 'heartrate') {
+                label1 = 'การเต้นของหัวใจ'
+
+                arTop10.forEach(element => {
+                    data.push(element.heart_rate)
+                    labelSet.push(element.datetime)
+                })
+
+            } else if (typeSelect == 'spo2') {
+                label1 = 'ออกซิเจนในเลือด'
+
+                arTop10.forEach(element => {
+                    data.push(element.spo2)
+                    labelSet.push(element.datetime)
+                })
+
+            } else if (typeSelect == 'sbp') {
+                
+                label1 = 'ความดันโลหิต บน'
+                label2 = 'ความดันโลหิต ล่าง'
+
+                arTop10.forEach(element => {
+                    data.push(element.sbp)
+                    data2.push(element.dbp)
+                    labelSet.push(element.datetime)
+                })
+                ob2 =  {
+                        label: label2,
+                        data: data2,
+                        borderColor: dangerColor,
+                        backgroundColor: 'transparent'
+                    }
+            }
+
+            var ctx = document.getElementById('kt_chartjs_2');
+
+            // Define colors
+ 
+
+            // Define fonts
+            // var fontFamily = KTUtil.getCssVariableValue('--bs-font-sans-serif');
+
+            // Chart labels
+            // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+            // Chart data
+            const dataChart = {
+                labels: labelSet,
+                datasets: [
+                    {
+                        label: label1,
+                        data: data,
+                        borderColor: primaryColor,
+                        backgroundColor: 'transparent'
+                    },
+                    
+                ]
+            };
+            if(typeSelect == 'sbp'){
+                dataChart.datasets.push(ob2)
+            }
+            console.log(dataChart)
+            // Chart config
+            const config = {
+                type: 'line',
+                data: dataChart,
+                options: {
+                    plugins: {
+                        title: {
+                            display: false,
+                        }
+                    },
+                    responsive: true,
+                },
+                defaults: {
+                    global: {
+                        defaultFont: 'Kanit'
+                    }
+                }
+            };
+
+            // Init ChartJS -- for more info, please visit: https://www.chartjs.org/docs/latest/
+            if(update){
+                myChart.data = dataChart // Would update the first dataset's value of 'March' to be 50
+                myChart.update(); // Calling update now animates the position of March from 90 to 50.
+            }else{
+                myChart = new Chart(ctx, config);
+
+            }
+
+        }
 
         function sbpAndDbp(sbp, dbp) {
             console.log(sbp, dbp)
